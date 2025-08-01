@@ -887,12 +887,15 @@ static size_t cb_WRITEFUNCTION_BUF(char *ptr, size_t size, size_t nmemb, void *d
   buf = Field(conn->ocamlValues, Ocaml_CALLBACKBUFFER);
   if (buf == Val_unit)
     {
-      buf = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT | CAML_BA_EXTERNAL, 1, NULL, 0);
+      buf = caml_ba_alloc_dims(CAML_BA_UINT8 | CAML_BA_C_LAYOUT | CAML_BA_EXTERNAL, 1, ptr, size*nmemb);
       Store_field(conn->ocamlValues, Ocaml_CALLBACKBUFFER, buf);
     }
-  struct caml_ba_array* ba = Caml_ba_array_val(buf);
-  ba->dim[0]=size*nmemb;
-  ba->data=ptr;
+  else
+    {
+      struct caml_ba_array* ba = Caml_ba_array_val(buf);
+      ba->dim[0]=size*nmemb;
+      ba->data=ptr;
+    }
   result = caml_callback_exn(Field(conn->ocamlValues, Ocaml_WRITEFUNCTION), buf);
 
   size_t r = 0;
