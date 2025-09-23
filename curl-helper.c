@@ -2364,6 +2364,19 @@ static void handle_SSLVERSION(Connection *conn, value option)
     case 5: v = CURL_SSLVERSION_TLSv1_1; break;
     case 6: v = CURL_SSLVERSION_TLSv1_2; break;
     case 7: v = CURL_SSLVERSION_TLSv1_3; break;
+#if HAVE_DECL_CURL_SSLVERSION_MAX_TLSV1_0
+    case 8: v = CURL_SSLVERSION_MAX_TLSv1_0; break;
+#endif
+#if HAVE_DECL_CURL_SSLVERSION_MAX_TLSV1_1
+    case 9: v = CURL_SSLVERSION_MAX_TLSv1_1; break;
+#endif
+#if HAVE_DECL_CURL_SSLVERSION_MAX_TLSV1_2
+    case 10: v = CURL_SSLVERSION_MAX_TLSv1_2; break;
+#endif
+#if HAVE_DECL_CURL_SSLVERSION_MAX_TLSV1_3
+    case 11: v = CURL_SSLVERSION_MAX_TLSv1_3; break;
+#endif
+
     default:
         caml_failwith("Invalid SSLVERSION Option");
         break;
