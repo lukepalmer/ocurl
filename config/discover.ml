@@ -331,6 +331,8 @@ let curl_h_declarations = [
 
   "curl_multi_poll";
   "curl_global_sslset";
+
+  "curl_ws_meta";
 ]
 
 let header_h_declarations = [

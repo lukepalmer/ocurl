@@ -5377,6 +5377,99 @@ value caml_curl_check_enums(value v_unit)
   CAMLreturn(v_r);
 }
 
+#if HAVE_DECL_CURL_WS_META
+/* WebSocket flags mapping: same order as OCaml variant */
+static const long wsFlags[] = {
+  CURLWS_TEXT,    /* 0 */
+  CURLWS_BINARY,  /* 1 */
+  CURLWS_CONT,    /* 2 */
+  CURLWS_CLOSE,   /* 3 */
+  CURLWS_PING,    /* 4 */
+  CURLWS_PONG,    /* 5 */
+  CURLWS_OFFSET   /* 6 */
+};
+
+static value curlWSFlag_list_of_int(int flags)
+{
+  CAMLparam0();
+  CAMLlocal1(result);
+
+  result = Val_emptylist;
+
+  for (int i = 0; i < (int)(sizeof(wsFlags) / sizeof(wsFlags[0])); i++) {
+    if (flags & wsFlags[i]) {
+      result = Val_cons(result, Val_int(i));
+    }
+  }
+
+  CAMLreturn(result);
+}
+
+static int curlWSFlag_list_to_int(value flag_list)
+{
+  return convert_bit_list(wsFlags, sizeof(wsFlags) / sizeof(wsFlags[0]), flag_list);
+}
+
+value caml_curl_ws_meta(value conn_v)
+{
+  CAMLparam1(conn_v);
+  CAMLlocal1(frame_record);
+  Connection *conn = Connection_val(conn_v);
+  const struct curl_ws_frame* frame;
+
+  caml_release_runtime_system();
+  frame = curl_ws_meta(conn->handle);
+  caml_acquire_runtime_system();
+
+  if (frame == NULL) {
+    // No WebSocket frame information available
+    CAMLreturn(Val_none);
+  }
+
+  // Create OCaml record: { age; flags; offset; bytesleft }
+  frame_record = caml_alloc(4, 0);
+  Store_field(frame_record, 0, Val_int(frame->age));
+  Store_field(frame_record, 1, curlWSFlag_list_of_int(frame->flags));
+  Store_field(frame_record, 2, Val_int(frame->offset));
+  Store_field(frame_record, 3, Val_int(frame->bytesleft));
+
+  CAMLreturn(caml_alloc_some(frame_record));
+}
+
+value caml_curl_ws_send(value conn_v, value buffer_v, value flags_v)
+{
+  CAMLparam3(conn_v, buffer_v, flags_v);
+  Connection *conn = Connection_val(conn_v);
+  size_t sent;
+  CURLcode result;
+
+  char* buffer = caml_stat_strdup(String_val(buffer_v));
+  size_t buffer_len = caml_string_length(buffer_v);
+  int flags = curlWSFlag_list_to_int(flags_v);
+
+  caml_release_runtime_system();
+  result = curl_ws_send(conn->handle, buffer, buffer_len, &sent, 0, flags);
+  caml_stat_free(buffer);
+  caml_acquire_runtime_system();
+
+  if (result != CURLE_OK) {
+    raiseError(conn, result);
+  }
+
+  CAMLreturn(Val_long(sent));
+}
+#else
+value caml_curl_ws_meta(value conn_v)
+{
+  caml_failwith("WebSocket support not available");
+}
+
+value caml_curl_ws_send(value conn_v, value buffer_v, value flags_v)
+{
+  caml_failwith("WebSocket support not available");
+}
+#endif
+
 #ifdef __cplusplus
 }
 #endif
