@@ -5,6 +5,7 @@
  * Copyright (c) 2009, ygrek, <ygrek@autistici.org>
  *)
 
+open Sexplib.Conv
 type t
 
 type curlCode =
@@ -90,6 +91,7 @@ type curlCode =
   | CURLE_SSH
   | CURLE_SSL_SHUTDOWN_FAILED
   | CURLE_AGAIN
+[@@deriving sexp_of]
 
 exception CurlException of (curlCode * int * string)
 
@@ -181,6 +183,7 @@ type curlDebugType =
   | DEBUGTYPE_SSL_DATA_IN
   | DEBUGTYPE_SSL_DATA_OUT
   | DEBUGTYPE_END
+[@@deriving sexp_of]
 
 type curlAuth =
   | CURLAUTH_BASIC
@@ -622,6 +625,7 @@ type version_info = {
   iconv_ver_num : int;
   libssh_version : string;
 }
+[@@deriving sexp_of]
 
 external version_info : unit -> version_info = "caml_curl_version_info"
 
@@ -1606,9 +1610,11 @@ module Multi = struct
 
   (* see curlm_sock_cb *)
   type poll = POLL_NONE | POLL_IN | POLL_OUT | POLL_INOUT | POLL_REMOVE
+[@@deriving sexp_of]
 
   (* see caml_curl_multi_socket_action *)
   type fd_status = EV_AUTO | EV_IN | EV_OUT | EV_INOUT
+[@@deriving sexp_of]
 
   external set_socket_function : mt -> (Unix.file_descr -> poll -> unit) -> unit = "caml_curl_multi_socketfunction"
   external set_timer_function : mt -> (int -> unit) -> unit = "caml_curl_multi_timerfunction"

@@ -94,6 +94,7 @@ type curlCode =
   | CURLE_SSH
   | CURLE_SSL_SHUTDOWN_FAILED
   | CURLE_AGAIN
+[@@deriving sexp_of]
 
 exception CurlException of (curlCode * int * string)
 
@@ -189,6 +190,7 @@ type curlDebugType =
   | DEBUGTYPE_SSL_DATA_IN
   | DEBUGTYPE_SSL_DATA_OUT
   | DEBUGTYPE_END
+[@@deriving sexp_of]
 
 type curlAuth =
   | CURLAUTH_BASIC
@@ -607,6 +609,7 @@ type version_info = {
   iconv_ver_num : int;
   libssh_version : string;
 }
+[@@deriving sexp_of]
 
 type pauseOption = PAUSE_SEND | PAUSE_RECV | PAUSE_ALL
 
@@ -1233,6 +1236,7 @@ module Multi : sig
     | POLL_OUT     (** available for writing *)
     | POLL_INOUT   (** both *)
     | POLL_REMOVE  (** socket not needed anymore *)
+[@@deriving sexp_of]
 
   (** socket status *)
   type fd_status =
@@ -1240,6 +1244,7 @@ module Multi : sig
     | EV_IN    (** socket has incoming data *)
     | EV_OUT   (** socket is available for writing *)
     | EV_INOUT (** both *)
+[@@deriving sexp_of]
 
   (** set the function to receive notifications on what socket events
       are currently interesting for libcurl on the specified socket handle *)
