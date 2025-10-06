@@ -5,7 +5,7 @@
  * Copyright (c) 2009, ygrek, <ygrek@autistici.org>
  *)
 
-open Sexplib0.Sexp_conv
+open! Sexplib0.Sexp_conv
 type t
 
 type curlCode =

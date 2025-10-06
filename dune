@@ -9,7 +9,8 @@
   (names curl-helper))
  (c_library_flags :standard (:include clibs.sexp))
  (libraries bigarray unix sexplib0)
- (modules curl))
+ (modules curl)
+ (preprocess (pps ppx_sexp_conv)))
 
 (library
  (name curl_lwt)

@@ -27,7 +27,8 @@
   base-bigarray
   base-unix  
   conf-libcurl
-  sexplib0)
+  sexplib0
+  ppx_sexp_conv)
  (conflicts
   (ocurl (<> "transition")))
  (tags (org:ygrek clib:curl)))
