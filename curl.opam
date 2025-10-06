@@ -17,6 +17,7 @@ depends: [
   "base-bigarray"
   "base-unix"
   "conf-libcurl"
+  "sexplib0"
   "odoc" {with-doc}
 ]
 conflicts: [

@@ -26,7 +26,8 @@
   (dune-configurator (>= "3.18.1"))
   base-bigarray
   base-unix  
-  conf-libcurl)
+  conf-libcurl
+  sexplib0)
  (conflicts
   (ocurl (<> "transition")))
  (tags (org:ygrek clib:curl)))
